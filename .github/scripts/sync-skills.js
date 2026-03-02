@@ -7,6 +7,7 @@ const CATEGORIES = {
   'text-trainer': 'Voice & Writing',
   'prospect-finder': 'Prospecting',
   'web-scraping': 'Data Extraction',
+  'gtm-scorecard': 'Intelligence',
 };
 
 const SKILLS_DIR = path.join(__dirname, '..', '..', 'skills');

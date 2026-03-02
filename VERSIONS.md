@@ -16,3 +16,6 @@ Track version history for all skills.
 
 ## web-scraping
 - **1.0.0** (2026-03-02) — Initial release. 9-method decision tree covering static, dynamic, API discovery, LLM extraction, evasion, and mobile interception.
+
+## gtm-scorecard
+- **2.0.0** (2026-03-02) — Added to gtme-skills collection. 7-dimension GTM health diagnostic with prospect mode, batch scoring, and outreach brief generation. Previously standalone repo.

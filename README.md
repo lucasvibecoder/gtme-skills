@@ -18,16 +18,16 @@ Install them into your agent, and it gains GTM engineering capabilities — writ
                     ┌─────────────┐
                     │ gtm-context │  (foundation)
                     └──────┬──────┘
-           ┌───────────────┼───────────────┐
-           │               │               │
-    ┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
-    │email-writer │ │prospect-    │ │web-scraping │
-    │             │ │finder       │ │             │
-    └──────┬──────┘ └─────────────┘ └─────────────┘
-           │
-    ┌──────▼──────┐
-    │text-trainer │  (feeds voice profiles to email-writer)
-    └─────────────┘
+        ┌──────────────┬───┴───┬──────────────┐
+        │              │       │              │
+ ┌──────▼──────┐ ┌────▼────┐ ┌▼─────────┐ ┌──▼───────────┐
+ │email-writer │ │prospect-│ │web-      │ │gtm-scorecard │
+ │             │ │finder   │ │scraping  │ │              │
+ └──────┬──────┘ └─────────┘ └──────────┘ └──────────────┘
+        │
+ ┌──────▼──────┐
+ │text-trainer │  (feeds voice profiles to email-writer)
+ └─────────────┘
 ```
 
 ## Skills
@@ -35,11 +35,12 @@ Install them into your agent, and it gains GTM engineering capabilities — writ
 <!-- SKILLS:START -->
 | Skill | Category | Version | Description |
 |-------|----------|---------|-------------|
-| [email-writer](skills/email-writer/SKILL.md) | Outbound & Email | 1.0.0 | Write effective emails for B2B sales and deal management. Use when asked to write, draft, reply to, or follow up on any business email — cold outreach, deal follow-ups, warm intros, referral follow-ups, inbound responses, re-engagement, post-call follow-ups, or any scenario where a rep needs to send an email. Also use when asked to find an email thread and draft a response, or when given a call transcript and asked to write a follow-up. |
-| [gtm-context](skills/gtm-context/SKILL.md) | Foundation | 1.0.0 | Captures company, ICP, GTM motion, tech stack, channels, and metrics into a reusable context file that other skills read automatically. |
-| [prospect-finder](skills/prospect-finder/SKILL.md) | Prospecting | 1.0.0 | Find people at companies and get their verified email addresses using Prospeo. Use when asked to find contacts, look up people, prospect, get emails for someone at a company, or find decision-makers. Examples: 'find the VP of Sales at Acme Corp', 'get me the email for John Smith at Stripe', 'who runs marketing at Notion?' |
-| [text-trainer](skills/text-trainer/SKILL.md) | Voice & Writing | 1.0.0 | Analyze someone's writing samples and generate a reusable voice profile. Use when asked to train a voice, create a writing profile, analyze someone's writing style, or build a voice profile for any person. Works with any writing type: tweets, emails, memos, Slack messages, LinkedIn posts, customer service replies, etc. |
-| [web-scraping](skills/web-scraping/SKILL.md) | Data Extraction | 1.0.0 | Extracts structured data from websites, single-page applications, and mobile APIs. Use when the user requests web scraping, automated data extraction, competitor monitoring, or parsing web content. |
+| [gtm-context](skills/gtm-context/) | Foundation | 1.0.0 | Captures company, ICP, GTM motion, tech stack, channels, and metrics into a reusable context file |
+| [email-writer](skills/email-writer/) | Outbound & Email | 1.0.0 | Write effective emails for B2B sales and deal management |
+| [gtm-scorecard](skills/gtm-scorecard/) | Intelligence | 2.0.0 | Diagnose any company's GTM infrastructure health in 60 seconds |
+| [prospect-finder](skills/prospect-finder/) | Prospecting | 1.0.0 | Find people at companies and get their verified email addresses |
+| [text-trainer](skills/text-trainer/) | Voice & Writing | 1.0.0 | Analyze writing samples and generate reusable voice profiles |
+| [web-scraping](skills/web-scraping/) | Data Extraction | 1.0.0 | Extract structured data from websites, SPAs, and mobile APIs |
 <!-- SKILLS:END -->
 
 ## Install
@@ -102,6 +103,10 @@ Once installed, use natural language with your agent:
 "Set up GTM context for my company — we sell to mid-market SaaS"
 ```
 
+```
+"Score the GTM health of warmly.ai"
+```
+
 ## Categories
 
 | Category | What it covers |
@@ -111,6 +116,7 @@ Once installed, use natural language with your agent:
 | Prospecting | Contact search, email enrichment, company research |
 | Data Extraction | Web scraping, API discovery, structured data extraction |
 | Voice & Writing | Writing analysis, voice profiles, style matching |
+| Intelligence | GTM health diagnostics, infrastructure scoring, competitive analysis |
 
 ## How Skills Work
 
