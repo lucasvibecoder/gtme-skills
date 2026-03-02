@@ -1,0 +1,44 @@
+{
+  "name": "gtme-skills",
+  "displayName": "GTME Skills — GTM Engineering Skills for AI Agents",
+  "description": "Production-ready agent skills for GTM engineers: cold outreach, prospecting, web scraping, voice training, and GTM context capture.",
+  "author": "lucasvibecoder",
+  "repository": "https://github.com/lucasvibecoder/gtme-skills",
+  "skills": [
+    {
+      "name": "gtm-context",
+      "path": "skills/gtm-context/SKILL.md",
+      "category": "Foundation",
+      "version": "1.0.0",
+      "description": "Captures company, ICP, GTM motion, tech stack, channels, and metrics into a reusable context file that other skills read automatically."
+    },
+    {
+      "name": "email-writer",
+      "path": "skills/email-writer/SKILL.md",
+      "category": "Outbound & Email",
+      "version": "1.0.0",
+      "description": "Write effective emails for B2B sales and deal management — cold outreach, deal follow-ups, warm intros, trigger routing, and sequence building."
+    },
+    {
+      "name": "text-trainer",
+      "path": "skills/text-trainer/SKILL.md",
+      "category": "Voice & Writing",
+      "version": "1.0.0",
+      "description": "Analyze writing samples and generate reusable voice profiles that other skills use to match a person's voice."
+    },
+    {
+      "name": "prospect-finder",
+      "path": "skills/prospect-finder/SKILL.md",
+      "category": "Prospecting",
+      "version": "1.0.0",
+      "description": "Find people at companies and get their verified email addresses using the Prospeo API."
+    },
+    {
+      "name": "web-scraping",
+      "path": "skills/web-scraping/SKILL.md",
+      "category": "Data Extraction",
+      "version": "1.0.0",
+      "description": "Extract structured data from websites, single-page applications, and mobile APIs using a 9-method decision tree."
+    }
+  ]
+}

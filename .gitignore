@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+.env
+.env.*
+*.log
+.agents/
+.claude/
+voice-profiles/

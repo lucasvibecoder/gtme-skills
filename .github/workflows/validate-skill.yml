@@ -1,0 +1,12 @@
+name: Validate Skill
+on:
+  pull_request:
+    paths:
+      - 'skills/**/SKILL.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Flash-Brew-Digital/validate-skill@v1

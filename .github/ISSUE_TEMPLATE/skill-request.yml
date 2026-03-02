@@ -1,0 +1,46 @@
+name: Skill Request
+description: Request a new GTM engineering skill
+title: "[Skill Request] "
+labels: ["skill-request"]
+body:
+  - type: input
+    id: skill-name
+    attributes:
+      label: Skill Name
+      description: Proposed name (lowercase, hyphens)
+      placeholder: "e.g., linkedin-outreach"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Foundation
+        - Outbound & Email
+        - Prospecting
+        - Data Extraction
+        - Voice & Writing
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should this skill do? What problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: trigger-phrases
+    attributes:
+      label: Example Trigger Phrases
+      description: What would a user say to invoke this skill?
+      placeholder: |
+        - "do X with Y"
+        - "help me Z"
+  - type: textarea
+    id: references
+    attributes:
+      label: Reference Materials
+      description: Links to docs, articles, or examples that would inform this skill
