@@ -142,6 +142,8 @@ Follow these steps in order. Each step has a checkpoint.
 6. VALIDATE OUTPUT (Section 5)
 
 7. EXPORT to target format (JSON lines, CSV, or user-specified)
+
+8. LOG TO SCRAPING LEDGER (Section 7)
 ```
 
 ---
@@ -212,6 +214,42 @@ DIAGNOSE THE BLOCK:
 - CAPTCHA on every request with no bypass → use a CAPTCHA-solving service or scraping API
 
 Scraping API services (last resort): ScrapingBee, Bright Data, Oxylabs, ScraperAPI
+
+## 7. Scraping Ledger
+
+After every completed scrape, append an entry to `.agents/scraping-log.md` in the current project. Create the file if it doesn't exist.
+
+**Entry format:**
+```markdown
+### {domain} — {date}
+- **URL:** {target URL or pattern}
+- **Method:** {tool used — HTTPX, BeautifulSoup, Playwright, Scrapy, LLM extraction, API}
+- **Classification:** {Static HTML / JS-rendered SPA / Hidden API / etc.}
+- **Items scraped:** {count}
+- **Output:** `{relative path to output file}`
+- **Blocked?** {No / Yes — describe what happened and how it was resolved}
+- **Notes:** {anything notable — rate limits hit, fields with high null rate, anti-bot encountered}
+```
+
+**Example:**
+```markdown
+### competitor.com — 2026-03-02
+- **URL:** https://competitor.com/pricing
+- **Method:** Playwright (JS-rendered SPA)
+- **Classification:** JS-rendered SPA
+- **Items scraped:** 3 pricing tiers
+- **Output:** `data/competitor-pricing.json`
+- **Blocked?** No
+- **Notes:** Pricing page loads via React, needed wait_for_selector on .plan-card
+```
+
+**Rules:**
+- Always append — never overwrite or edit previous entries
+- One entry per scrape session (if you scrape 3 sites in one session, that's 3 entries)
+- If the scrape failed entirely, still log it with `**Items scraped:** 0` and explain why in Notes
+- Keep Notes brief — this is a ledger, not a post-mortem
+
+---
 
 ## Related Skills
 
