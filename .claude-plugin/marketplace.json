@@ -10,7 +10,7 @@
       "path": "skills/email-writer/SKILL.md",
       "category": "Outbound & Email",
       "version": "1.0.0",
-      "description": "Write effective emails for B2B sales and deal management — cold outreach, deal follow-ups, warm intros, trigger routing, and sequence building."
+      "description": "Write effective emails for B2B sales and deal management. Use when asked to write, draft, reply to, or follow up on any business email — cold outreach, deal follow-ups, warm intros, referral follow-ups, inbound responses, re-engagement, post-call follow-ups, or any scenario where a rep needs to send an email. Also use when asked to find an email thread and draft a response, or when given a call transcript and asked to write a follow-up."
     },
     {
       "name": "gtm-context",
@@ -31,21 +31,21 @@
       "path": "skills/prospect-finder/SKILL.md",
       "category": "Prospecting",
       "version": "1.0.0",
-      "description": "Find people at companies and get their verified email addresses using the Prospeo API."
+      "description": "Find people at companies and get their verified email addresses using Prospeo. Use when asked to find contacts, look up people, prospect, get emails for someone at a company, or find decision-makers. Examples: 'find the VP of Sales at Acme Corp', 'get me the email for John Smith at Stripe', 'who runs marketing at Notion?'"
     },
     {
       "name": "text-trainer",
       "path": "skills/text-trainer/SKILL.md",
       "category": "Voice & Writing",
       "version": "1.0.0",
-      "description": "Analyze writing samples and generate reusable voice profiles that other skills use to match a person's voice."
+      "description": "Analyze someone's writing samples and generate a reusable voice profile. Use when asked to train a voice, create a writing profile, analyze someone's writing style, or build a voice profile for any person. Works with any writing type: tweets, emails, memos, Slack messages, LinkedIn posts, customer service replies, etc."
     },
     {
       "name": "web-scraping",
       "path": "skills/web-scraping/SKILL.md",
       "category": "Data Extraction",
       "version": "1.0.0",
-      "description": "Extract structured data from websites, single-page applications, and mobile APIs using a 9-method decision tree."
+      "description": "Extracts structured data from websites, single-page applications, and mobile APIs. Use when the user requests web scraping, automated data extraction, competitor monitoring, or parsing web content."
     }
   ]
 }
