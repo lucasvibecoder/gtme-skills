@@ -40,7 +40,7 @@ Install them into your agent, and it gains GTM engineering capabilities — writ
 | [gtm-scorecard](skills/gtm-scorecard/SKILL.md) | Intelligence | 2.0.0 | Diagnose any company's GTM infrastructure health in 60 seconds — scores 7 dimensions from public data using web search only. |
 | [prospect-finder](skills/prospect-finder/SKILL.md) | Prospecting | 1.0.0 | Find people at companies and get their verified email addresses using Prospeo. Use when asked to find contacts, look up people, prospect, get emails for someone at a company, or find decision-makers. Examples: 'find the VP of Sales at Acme Corp', 'get me the email for John Smith at Stripe', 'who runs marketing at Notion?' |
 | [text-trainer](skills/text-trainer/SKILL.md) | Voice & Writing | 1.0.0 | Analyze someone's writing samples and generate a reusable voice profile. Use when asked to train a voice, create a writing profile, analyze someone's writing style, or build a voice profile for any person. Works with any writing type: tweets, emails, memos, Slack messages, LinkedIn posts, customer service replies, etc. |
-| [web-scraping](skills/web-scraping/SKILL.md) | Data Extraction | 1.0.0 | Extracts structured data from websites, single-page applications, and mobile APIs. Use when the user requests web scraping, automated data extraction, competitor monitoring, or parsing web content. |
+| [executing-web-scraping](skills/web-scraping/SKILL.md) | Data Extraction | 1.0.0 | Extracts structured data from websites, single-page applications, and mobile APIs. Use when the user requests web scraping, automated data extraction, competitor monitoring, or parsing web content. |
 <!-- SKILLS:END -->
 
 ## Install
