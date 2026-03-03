@@ -13,6 +13,20 @@
 | Redirect to login/different page | Session/cookie required | Use Playwright to get cookies first |
 | Connection reset / timeout | IP-level block | Switch IP / proxy |
 
+## Cloudflare-Specific Error Codes
+
+When the target is behind Cloudflare, you may see specific error codes in the response body or challenge page. These shortcut the diagnosis — jump directly to the fix.
+
+| Error Code | Meaning | Fix |
+|-----------|---------|-----|
+| 1015 | Rate Limited | Slow down request frequency, add random jitter (1-5s), rotate proxy |
+| 1010 | Browser Signature / Access Denied | `navigator.webdriver` or JS fingerprint leaked. Escalate to Playwright + stealth (Level 3) |
+| 1009 | Country Banned | Your IP's country is blocked. Switch to a proxy in an allowed location |
+| 1020 | Access Denied (WAF Rule) | Generic WAF block. Ensure full header coherence (User-Agent + Accept + Referer all match a real browser). If still blocked, escalate to managed browser service (Level 4) |
+| 600010 or interactive CAPTCHA | Turnstile Challenge | Cannot be bypassed locally. Escalate to managed browser service (Level 4) or CAPTCHA solver API |
+
+> **Note:** Cloudflare often returns a generic 403 or challenge page without a visible error code. If no specific code is present, fall back to the Block Diagnosis table above.
+
 ## Level 1: Header Rotation
 
 The cheapest fix — costs nothing, solves ~40% of blocks.

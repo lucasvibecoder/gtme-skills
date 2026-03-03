@@ -1,16 +1,9 @@
 ---
-name: web-scraping
+name: executing-web-scraping
 description: Extracts structured data from websites, single-page applications, and mobile APIs. Use when the user requests web scraping, automated data extraction, competitor monitoring, or parsing web content.
-metadata:
-  version: "1.0.0"
-compatibility: "Requires Python 3.10+. Optional: pip install tls-client playwright playwright-stealth (for Level 2-3 scraping)."
 ---
 
 # Web Scraping Skill
-
-### Step 0: Load GTM Context
-
-If `.agents/gtm-context.md` exists, read it for context about the company, competitors, and data needs. This helps prioritize what data to extract and how to structure the output.
 
 ## 1. Trigger Phrases
 
@@ -39,8 +32,24 @@ Open target URL in browser → DevTools (F12) → Network tab → filter XHR/Fet
 Navigate the page, click buttons, scroll — watch for JSON responses
 IF clean JSON endpoint found:
   → Copy the request as cURL (right-click → Copy as cURL)
-  → Reverse-engineer it with HTTPX (see references/api-discovery.md)
+  → Reverse-engineer it with HTTPX (see reference/api_discovery.md)
   → This is almost always faster and more reliable than HTML scraping
+```
+
+### Step 2.5: Check for Embedded JSON State
+```
+Before classifying as SPA, fetch the raw HTML with HTTPX (plain GET with browser headers).
+Search the HTML source for embedded data:
+  - <script type="application/ld+json">     → JSON-LD structured data (products, org info, store details)
+  - <script id="__NEXT_DATA__">              → Next.js hydration payload (entire page data)
+  - window.__INITIAL_STATE__                 → Redux/Vuex pre-loaded state
+  - window.__PRELOADED_STATE__               → Same pattern, different variable name
+  - Any <script> tag containing a large JSON blob (>1KB)
+
+IF found:
+  → Verify the JSON contains the specific fields you need (not just minimal SEO metadata)
+  → Extract with regex + json.loads — no browser needed
+  → See reference/api_discovery.md (Embedded JSON State section)
 ```
 
 ### Step 3: Check robots.txt
@@ -77,35 +86,39 @@ IF public API exists
 
 IF hidden JSON endpoint found (Step 2)
   → HTTPX + direct endpoint
-  → See references/api-discovery.md
+  → See reference/api_discovery.md
+
+IF embedded JSON state found in HTML source (Step 2.5)
+  → HTTPX + regex + json.loads
+  → See reference/api_discovery.md (Embedded JSON State section)
 
 IF static HTML + small scale (<100 pages)
   → BeautifulSoup + HTTPX
-  → See references/static-scraping.md
+  → See reference/static_scraping.md
 
 IF static HTML + large scale (>100 pages)
   → Scrapy
-  → See references/static-scraping.md
+  → See reference/static_scraping.md
 
 IF JS-rendered SPA
   → Playwright
-  → See references/dynamic-scraping.md
+  → See reference/dynamic_scraping.md
 
 IF behind auth (login required)
   → Playwright with session cookies
-  → See references/dynamic-scraping.md
+  → See reference/dynamic_scraping.md
 
 IF unstructured OR layout changes frequently
   → LLM extraction (markdownify + Claude/OpenAI)
-  → See references/llm-extraction.md
+  → See reference/llm_extraction.md
 
 IF behind Cloudflare / DataDome / CAPTCHA
   → Evasion techniques first, then appropriate tool
-  → See references/evasion.md
+  → See reference/evasion_mobile.md
 
 IF mobile app only (no web version)
   → Mobile API interception
-  → See references/evasion.md
+  → See reference/evasion_mobile.md
 ```
 
 ---
@@ -120,11 +133,11 @@ Follow these steps in order. Each step has a checkpoint.
 
 2. WRITE EXTRACTION SCRIPT
    → Use the reference doc for your selected tool
-   → Apply operational basics to every script (references/operational-basics.md):
+   → Apply operational basics to every script (reference/operational_basics.md):
      - Rate limiting (minimum 1s between requests unless API allows more)
      - Retry logic with backoff
      - User-Agent header (never use default python-requests UA)
-   → Use starter script from templates/starter-scripts.md as base
+   → Use starter script from templates/starter_scripts.md as base
 
 3. TEST ON 5 ITEMS FIRST
    → Run against 5 URLs/items only
@@ -142,8 +155,6 @@ Follow these steps in order. Each step has a checkpoint.
 6. VALIDATE OUTPUT (Section 5)
 
 7. EXPORT to target format (JSON lines, CSV, or user-specified)
-
-8. LOG TO SCRAPING LEDGER (Section 7)
 ```
 
 ---
@@ -185,23 +196,23 @@ DIAGNOSE THE BLOCK:
 ├── 403 Forbidden
 │   ├── Missing headers? → Add User-Agent, Accept, Accept-Language, Referer
 │   ├── Still 403? → TLS fingerprint blocked
-│   │   → Switch to tls-client (references/evasion.md)
-│   └── Still 403? → IP blocked → Add proxy rotation (references/operational-basics.md)
+│   │   → Switch to tls-client (reference/evasion_mobile.md)
+│   └── Still 403? → IP blocked → Add proxy rotation (reference/operational_basics.md)
 │
 ├── CAPTCHA / Cloudflare challenge page
-│   ├── Simple JS challenge? → Playwright with stealth plugin (references/dynamic-scraping.md)
-│   ├── Turnstile / hCaptcha? → Managed browser service (references/evasion.md)
+│   ├── Simple JS challenge? → Playwright with stealth plugin (reference/dynamic_scraping.md)
+│   ├── Turnstile / hCaptcha? → Managed browser service (reference/evasion_mobile.md)
 │   └── reCAPTCHA v3? → Likely need scraping API service (ScrapingBee, Bright Data)
 │
 ├── Empty response / blank page
-│   ├── JS-rendered? → Switch to Playwright (references/dynamic-scraping.md)
+│   ├── JS-rendered? → Switch to Playwright (reference/dynamic_scraping.md)
 │   ├── Geo-blocked? → Try proxy in target country
 │   └── Rate limited silently? → Add delays, reduce concurrency
 │
 ├── 429 Too Many Requests
 │   ├── Increase delay between requests
 │   ├── Add jitter (random 1-3s extra)
-│   └── Rotate proxies if available (references/operational-basics.md)
+│   └── Rotate proxies if available (reference/operational_basics.md)
 │
 └── Redirect loop / soft block
     ├── Check if cookies are required → Use session with cookie persistence
@@ -214,45 +225,3 @@ DIAGNOSE THE BLOCK:
 - CAPTCHA on every request with no bypass → use a CAPTCHA-solving service or scraping API
 
 Scraping API services (last resort): ScrapingBee, Bright Data, Oxylabs, ScraperAPI
-
-## 7. Scraping Ledger
-
-After every completed scrape, append an entry to `.agents/scraping-log.md` in the current project. Create the file if it doesn't exist.
-
-**Entry format:**
-```markdown
-### {domain} — {date}
-- **URL:** {target URL or pattern}
-- **Method:** {tool used — HTTPX, BeautifulSoup, Playwright, Scrapy, LLM extraction, API}
-- **Classification:** {Static HTML / JS-rendered SPA / Hidden API / etc.}
-- **Items scraped:** {count}
-- **Output:** `{relative path to output file}`
-- **Blocked?** {No / Yes — describe what happened and how it was resolved}
-- **Notes:** {anything notable — rate limits hit, fields with high null rate, anti-bot encountered}
-```
-
-**Example:**
-```markdown
-### competitor.com — 2026-03-02
-- **URL:** https://competitor.com/pricing
-- **Method:** Playwright (JS-rendered SPA)
-- **Classification:** JS-rendered SPA
-- **Items scraped:** 3 pricing tiers
-- **Output:** `data/competitor-pricing.json`
-- **Blocked?** No
-- **Notes:** Pricing page loads via React, needed wait_for_selector on .plan-card
-```
-
-**Rules:**
-- Always append — never overwrite or edit previous entries
-- One entry per scrape session (if you scrape 3 sites in one session, that's 3 entries)
-- If the scrape failed entirely, still log it with `**Items scraped:** 0` and explain why in Notes
-- Keep Notes brief — this is a ledger, not a post-mortem
-
----
-
-## Related Skills
-
-- **[gtm-context](../gtm-context/)** — Foundation context for understanding what data matters
-- **[prospect-finder](../prospect-finder/)** — Find contacts at companies discovered through scraping
-- **[email-writer](../email-writer/)** — Write outreach based on scraped intelligence

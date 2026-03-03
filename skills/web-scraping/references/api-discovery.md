@@ -111,6 +111,57 @@ Watch DevTools Network tab while scrolling
 → Replicate that parameter pattern in your script
 ```
 
+## Embedded JSON State (No Browser Needed)
+
+Many modern sites embed their data directly in the HTML inside `<script>` tags. This is often faster than Playwright and more reliable than HTML parsing. **Check for these BEFORE spinning up a headless browser.**
+
+### Patterns to Search For
+
+| Pattern | Where You'll See It | How to Extract |
+|---------|-------------------|----------------|
+| `<script type="application/ld+json">` | E-commerce, local business, news — any SEO-focused site | Parse `<script>` tag contents directly as JSON |
+| `<script id="__NEXT_DATA__">` | Any Next.js site (common: e-commerce, real estate, news) | Parse tag contents, navigate to `.props.pageProps` |
+| `window.__INITIAL_STATE__` | Redux apps (React + Redux) | Regex to extract JSON after `=`, parse with `json.loads` |
+| `window.__PRELOADED_STATE__` | Same as above, different variable name | Same regex approach |
+
+### Extraction Example
+
+```python
+import httpx
+import json
+import re
+
+url = "https://example.com/products"
+headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
+
+response = httpx.get(url, headers=headers, follow_redirects=True)
+html = response.text
+
+# --- Pattern 1: JSON-LD ---
+ld_matches = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
+for match in ld_matches:
+    data = json.loads(match)
+    print("Found JSON-LD:", data.get("@type", "unknown type"))
+
+# --- Pattern 2: Next.js __NEXT_DATA__ ---
+next_match = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
+if next_match:
+    data = json.loads(next_match.group(1))
+    page_data = data["props"]["pageProps"]
+    print("Found Next.js data:", list(page_data.keys()))
+
+# --- Pattern 3: Redux/Vuex initial state ---
+state_match = re.search(r'window\.__(?:INITIAL|PRELOADED)_STATE__\s*=\s*({.*?});\s*</script>', html, re.DOTALL)
+if state_match:
+    data = json.loads(state_match.group(1))
+    print("Found initial state:", list(data.keys()))
+```
+
+> **Important:** Verify the embedded JSON contains the specific fields you need. Some sites include minimal JSON-LD (just site name + logo) while the real data loads via XHR. If the JSON blob doesn't have your target data, fall through to the SPA classification.
+
 ## Common Gotchas
 - **Auth tokens expire** — some APIs use short-lived tokens. Check if there's a `/token` or `/auth` endpoint that issues fresh ones.
 - **CORS headers present** — the API is meant for browser-only use. You can still call it from Python (CORS is browser-enforced only).

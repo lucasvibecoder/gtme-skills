@@ -145,6 +145,45 @@ with sync_playwright() as p:
     browser.close()
 ```
 
+### MFA-Protected Sites — Storage State Pattern
+
+For sites with multi-factor auth (Salesforce, LinkedIn, internal tools), do NOT try to script the login. MFA prompts (SMS codes, authenticator apps, push notifications) cannot be automated reliably — it's brittle and wastes time.
+
+Instead, log in once manually and save the full browser state for reuse.
+
+```python
+from playwright.sync_api import sync_playwright
+
+# --- FIRST RUN: Manual login + save state ---
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=False)  # Headed — you can see and interact
+    context = browser.new_context()
+    page = context.new_page()
+
+    page.goto("https://app.example.com/login")
+    input("Log in manually in the browser (complete MFA), then press Enter here...")
+
+    # Save full state: cookies + localStorage + sessionStorage
+    context.storage_state(path="state.json")
+    print("State saved to state.json")
+    browser.close()
+
+# --- SUBSEQUENT RUNS: Load state, skip login entirely ---
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)  # Headless is fine now
+    context = browser.new_context(storage_state="state.json")
+    page = context.new_page()
+
+    page.goto("https://app.example.com/protected-data")  # Already authenticated
+    # ... extract data ...
+
+    browser.close()
+```
+
+**Why storage_state instead of cookies?** `storage_state` captures cookies AND localStorage AND sessionStorage. Many modern SPAs store auth tokens in localStorage, not cookies — plain cookie export misses those.
+
+> **Session expiry:** Storage state files expire when the session does. If scraping fails with a 401 or 403, delete `state.json` and repeat the manual login step.
+
 ## Intercepting API Responses
 
 Instead of parsing HTML, intercept the JSON API calls the SPA makes:

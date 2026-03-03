@@ -109,10 +109,14 @@ result = graph.run()
 
 ## Schema-Driven Extraction with Pydantic
 
-For repeatable extractions, define a Pydantic model so the LLM returns consistent shapes:
+**Rule: Always define a Pydantic schema BEFORE prompting the LLM. Never return raw LLM output to the user without validation.**
+
+Define the expected shape first:
 
 ```python
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
+import anthropic
+import json
 
 class Product(BaseModel):
     name: str
@@ -123,10 +127,56 @@ class Product(BaseModel):
 
 class ExtractionResult(BaseModel):
     products: list[Product]
+```
 
-# In your prompt to Claude/OpenAI:
-# "Extract data matching this schema: {ExtractionResult.model_json_schema()}"
-# Then validate: result = ExtractionResult.model_validate_json(llm_response)
+### Validation-and-Retry Loop
+
+Always validate LLM output against the schema and retry on failure. This catches hallucinated fields, wrong types, and missing required data.
+
+```python
+def extract_with_validation(markdown: str, schema_class, prompt: str, max_retries: int = 2):
+    """Extract structured data from markdown, validate against Pydantic schema, retry on failure."""
+    client = anthropic.Anthropic()
+    schema_json = json.dumps(schema_class.model_json_schema(), indent=2)
+    errors_so_far = []
+
+    for attempt in range(max_retries + 1):
+        error_context = ""
+        if errors_so_far:
+            error_context = f"\n\nYour previous response had validation errors:\n{errors_so_far[-1]}\nFix these errors and try again."
+
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=2048,
+            messages=[{
+                "role": "user",
+                "content": f"""{prompt}
+
+Return valid JSON matching this exact schema:
+{schema_json}
+{error_context}
+
+Page content:
+{markdown[:8000]}"""
+            }]
+        )
+
+        raw_text = message.content[0].text
+        try:
+            parsed = json.loads(raw_text)
+            result = schema_class.model_validate(parsed)
+            return result  # Validation passed
+        except (json.JSONDecodeError, ValidationError) as e:
+            errors_so_far.append(str(e))
+            if attempt == max_retries:
+                raise ValueError(
+                    f"Extraction failed after {max_retries + 1} attempts. "
+                    f"Last error: {errors_so_far[-1]}"
+                )
+
+# Usage:
+# result = extract_with_validation(markdown, ExtractionResult, "Extract all products from this page")
+# result.products[0].name  ← guaranteed to be a valid string
 ```
 
 ## Cost Awareness
